@@ -25,7 +25,7 @@ namespace AWS
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
-        public static void uploadFile(string[] paths, string id)
+        public static void uploadFile(string[] paths)
         {
 
             AmazonS3Client client = (AmazonS3Client)Amazon.AWSClientFactory.CreateAmazonS3Client(accessKey, secretKey, RegionEndpoint.USWest2);
@@ -40,7 +40,7 @@ namespace AWS
                     
                     //upload successful
                 }
-                callRadioAPI(id);
+               
                 
             }
             catch (AmazonS3Exception e)

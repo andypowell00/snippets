@@ -9,7 +9,7 @@ using System.Net;
 
 namespace HttpCalls {
 
-
+ //this class is mainly for reference , functions used in past projects
   public class Posts {
 
   public static bool postJson(string json)
@@ -46,10 +46,40 @@ namespace HttpCalls {
 
         }//end postJson()
 
+     
 
+     //this method takes in an object containing fields specified by the third party and an optional uid param
+     public static string callWS(CUSTOMOBJECT obj, string uid = "") {
+      string url = ConfigurationManager.AppSettings["WSUrl"].ToString();
+     
+      Uri mssURI = new Uri(url, UriKind.Absolute);
+      byte[] postData = Encoding.UTF8.GetBytes("realartfeed= " + JsonConvert.SerializeObject(obj));
 
+      try {
+        using (var wc = new WebClient()) {
 
+          wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+         
+          byte[] response = wc.UploadData(url, postData);
 
-     }
+          string jsonResponse = Encoding.UTF8.GetString(response);
+          dynamic jsonObj = JsonConvert.DeserializeObject(jsonResponse);
+
+          if (jsonObj.error == false) {
+            CreateLead(obj, "success", uid);  //method for an old project, remove/replace 
+            return "true";
+
+          } else {
+            CreateLead(obj, jsonObj.errormessage, uid);
+            return jsonObj.errormessage + " " + JsonConvert.SerializeObject(obj);
+          }
+
+        }
+      } 
+      catch (Exception we) {
+        return we.Message;
+      }
+    }
+    }
 
   }
